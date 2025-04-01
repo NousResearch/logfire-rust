@@ -11,7 +11,7 @@ use tracing_subscriber::{Layer, registry::LookupSpan};
 
 use crate::{LogfireTracer, try_with_logfire_tracer};
 
-pub(crate) struct LogfireTracingLayer(pub(crate) opentelemetry_sdk::trace::Tracer);
+pub struct LogfireTracingLayer(pub opentelemetry_sdk::trace::Tracer);
 
 impl<S> Layer<S> for LogfireTracingLayer
 where

@@ -121,7 +121,7 @@ use crate::config::{
 };
 use crate::internal::exporters::console::{ConsoleWriter, SimpleConsoleSpanExporter};
 
-mod bridges;
+pub mod bridges;
 pub mod config;
 pub mod exporters;
 mod macros;
@@ -435,7 +435,7 @@ impl LogfireConfigBuilder {
         } = self.build_parts(None)?;
 
         if !local {
-            tracing::subscriber::set_global_default(subscriber.clone())?;
+            // tracing::subscriber::set_global_default(subscriber.clone())?;
             let logger = bridges::log::LogfireLogger::init(tracer.inner.clone());
             log::set_logger(logger)?;
             log::set_max_level(logger.max_level());
@@ -635,7 +635,7 @@ impl LogfireConfigBuilder {
 #[must_use = "this should be kept alive until logging should be stopped"]
 pub struct ShutdownHandler {
     tracer_provider: SdkTracerProvider,
-    tracer: LogfireTracer,
+    pub tracer: LogfireTracer,
     subscriber: Arc<dyn Subscriber + Send + Sync>,
     meter_provider: SdkMeterProvider,
 }
@@ -725,10 +725,16 @@ fn get_optional_env(
 }
 
 #[derive(Clone)]
-struct LogfireTracer {
+pub struct LogfireTracer {
     inner: Tracer,
     handle_panics: bool,
     console_writer: Option<Arc<ConsoleWriter>>,
+}
+
+impl LogfireTracer {
+    pub fn tracer(&self) -> &Tracer {
+        &self.inner
+    }
 }
 
 // Global tracer configured in `logfire::configure()`

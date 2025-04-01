@@ -1,2 +1,2 @@
 pub(crate) mod log;
-pub(crate) mod tracing;
+pub mod tracing;
